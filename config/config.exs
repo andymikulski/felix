@@ -36,6 +36,18 @@ config :esbuild,
       ~w(js/app.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.ts=tsx --loader:.tsx=tsx),
     cd: Path.expand("../apps/felix_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ],
+  game: [
+    args:
+      ~w(js/game.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.ts=tsx --loader:.tsx=tsx),
+    cd: Path.expand("../apps/felix_web/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ],
+  lobby: [
+    args:
+      ~w(js/lobby.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.ts=tsx --loader:.tsx=tsx),
+    cd: Path.expand("../apps/felix_web/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Configure tailwind (the version is required)

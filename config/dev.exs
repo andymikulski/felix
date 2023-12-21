@@ -19,13 +19,17 @@ config :felix, Felix.Repo,
 config :felix_web, FelixWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  # http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "NCfpZwE6KVXhrgnMCl5jF3LkwLHnrOmzGl/RadsYn20HuWFWRK7yaUVmJR2Qs76B",
   watchers: [
+    # Need one watcher entry per entrypoint/file that we want to generate
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    esbuild_lobby: {Esbuild, :install_and_run, [:lobby, ~w(--sourcemap=inline --watch)]},
+    esbuild_game: {Esbuild, :install_and_run, [:game, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 

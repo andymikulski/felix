@@ -1,3 +1,5 @@
+console.log('App');
+
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
 // import "./user_socket.js"
@@ -43,4 +45,4 @@ check();
 
 (window as any).liveSocket = liveSocket
 
-import "./game/src/main.ts";
+// import "./game/src/main.ts";

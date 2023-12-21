@@ -61,8 +61,8 @@ defmodule FelixWeb.MixProject do
       setup: ["deps.get", "assets.setup", "assets.build"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.build": ["tailwind default", "esbuild default", "esbuild game", "esbuild lobby"],
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "esbuild game --minify", "esbuild lobby --minify", "phx.digest"]
     ]
   end
 end
