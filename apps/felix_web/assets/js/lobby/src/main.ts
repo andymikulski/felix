@@ -4,9 +4,11 @@ import ServiceContainer, { IService } from '../../game/src/services/ServiceConta
 import { CoroutineManager } from '../../game/src/utils/Coroutines';
 import { TriggerManager } from '../../game/src/utils/phaser/Triggers';
 import { CastToPhaserGameService } from '../../game/src/services/PhaserGameService.gen';
-import MainScene from '../../game/src/scenes/MainScene';
 import { RVOService } from '../../game/src/utils/rvo/RVOManager';
 import { PhoenixChannelService } from '../../game/src/services/PhoenixChannelService';
+import LobbyScene from './LobbyScene';
+
+import "../../game/src/utils/phaser/PRDE";
 
 class MainSceneStartupService implements IService {
   onServicesReady(): void { }
@@ -14,7 +16,7 @@ class MainSceneStartupService implements IService {
     const game = ServiceContainer.getService(CastToPhaserGameService).getGame();
     // Attach main scene only after all services have instantiated,
     // because there is likely to be code inside the Scene that depends on those services.
-    game.scene.add('MainScene', MainScene, true);
+    game.scene.add('MainScene', LobbyScene, true);
 
     return new Promise((res) => {
       const check = () => {

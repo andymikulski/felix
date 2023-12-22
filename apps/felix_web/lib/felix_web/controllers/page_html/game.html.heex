@@ -1,0 +1,12 @@
+<.flash_group flash={@flash} />
+
+
+game
+
+<script type="text/javascript">
+window.gameInfo = {
+  game_id: "<%= @game_id %>"
+}
+</script>
+
+<script defer phx-track-static type="text/javascript" src={~p"/assets/game.js"}></script>

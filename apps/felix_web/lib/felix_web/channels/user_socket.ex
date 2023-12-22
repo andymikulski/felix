@@ -8,6 +8,7 @@ defmodule FelixWeb.UserSocket do
 
   ## Channels
 
+  channel "lobby", FelixWeb.RoomChannel
   channel "room:*", FelixWeb.RoomChannel
 
   # Socket params are passed from the client and can

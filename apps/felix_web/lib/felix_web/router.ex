@@ -18,6 +18,7 @@ defmodule FelixWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/game/:id", PageController, :game
   end
 
   # Other scopes may use custom stacks.

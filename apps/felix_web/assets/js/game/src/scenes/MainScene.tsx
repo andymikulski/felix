@@ -8,6 +8,15 @@ import { CastToPhoenixChannelService } from "../services/PhoenixChannelService.g
 import QuakeEffect, { QuakeEffectMode } from "../utils/phaser/fx/QuakeEffect";
 import React, { FormEvent } from "react";
 
+declare global {
+  interface Window {
+    gameInfo: {
+      game_id: string;
+    };
+  }
+}
+
+
 type PromptProps = {
   onSubmit: (input: string) => void;
 };
@@ -53,7 +62,9 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("fog-dot", "https://i.imgur.com/anJLPER.png");
   };
   create = () => {
-    const network = ServiceContainer.getService(CastToPhoenixChannelService);
+    const channels = ServiceContainer.getService(CastToPhoenixChannelService);
+    const network = channels.getChannel('room:' + window.gameInfo.game_id);
+
     network.subscribe("shout", (msg: string) => {
       // display message in a random spot on the screen
       const txt = this.add.text(

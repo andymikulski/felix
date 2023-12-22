@@ -1,12 +1,13 @@
-import { SceneService } from './services/SceneService';
-import { PhaserGameService } from './services/PhaserGameService';
-import ServiceContainer, { IService } from './services/ServiceContainer';
-import { CoroutineManager } from './utils/Coroutines';
-import { TriggerManager } from './utils/phaser/Triggers';
-import { CastToPhaserGameService } from './services/PhaserGameService.gen';
-import MainScene from './scenes/MainScene';
-import { RVOService } from './utils/rvo/RVOManager';
-import { PhoenixChannelService } from './services/PhoenixChannelService';
+import MainScene from "./scenes/MainScene";
+import { PhaserGameService } from "./services/PhaserGameService";
+import { CastToPhaserGameService } from "./services/PhaserGameService.gen";
+import { PhoenixChannelService } from "./services/PhoenixChannelService";
+import { SceneService } from "./services/SceneService";
+import ServiceContainer, { IService } from "./services/ServiceContainer";
+import { CoroutineManager } from "./utils/Coroutines";
+import { TriggerManager } from "./utils/phaser/Triggers";
+import { RVOService } from "./utils/rvo/RVOManager";
+
 
 class MainSceneStartupService implements IService {
   onServicesReady(): void {}

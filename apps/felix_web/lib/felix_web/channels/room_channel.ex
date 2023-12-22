@@ -2,7 +2,7 @@ defmodule FelixWeb.RoomChannel do
   use FelixWeb, :channel
 
   @impl true
-  def join("room:lobby", payload, socket) do
+  def join("lobby", payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

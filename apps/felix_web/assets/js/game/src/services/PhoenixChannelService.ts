@@ -2,23 +2,22 @@ import { IService } from "./ServiceContainer";
 import Phaser from "phaser";
 import { Channel, Socket } from "phoenix";
 
-export interface IPhoenixChannelService {
+export interface IPhoenixChannel {
   sendRPC<T>(rpc: string, data: any): Promise<T>;
   subscribe(event: string, callback: (data: any) => void): void;
 }
 
 const decoder = new TextDecoder("utf-8");
 
-export class PhoenixChannelService implements IService, IPhoenixChannelService {
-  game: Phaser.Game;
+export class PhoenixChannel implements IPhoenixChannel {
   private socket: Socket;
   private channel: Channel;
 
-  public initializeService = async (): Promise<void> => {
-    await this.setupChannel();
-  };
+  constructor(private route: string) {
+    this.setupChannel(route);
+  }
 
-  private setupChannel = () => {
+  private setupChannel = (route: string) => {
     return new Promise<Socket>((res, rej) => {
       // And connect to the path in "lib/felix_web/endpoint.ex". We pass the
       // token for authentication. Read below how it should be used.
@@ -31,7 +30,7 @@ export class PhoenixChannelService implements IService, IPhoenixChannelService {
       // Now that you are connected, you can join channels with a topic.
       // Let's assume you have a channel with a topic named `room` and the
       // subtopic is its id - in this case 42:
-      let channel = socket.channel("room:42", {});
+      let channel = socket.channel(route, {});
       this.channel = channel;
 
       channel
@@ -48,14 +47,6 @@ export class PhoenixChannelService implements IService, IPhoenixChannelService {
 
       console.log("channel", channel);
     });
-  };
-
-  private tryPing = async () => {
-    const res = await this.sendRPC<{ data: number }>("ping", {
-      data: Date.now(),
-    });
-    const now = Date.now();
-    console.log("Ping was ", now - res.data, "ms");
   };
 
   public subscribe = (event: string, callback: (data: any) => void) => {
@@ -87,5 +78,34 @@ export class PhoenixChannelService implements IService, IPhoenixChannelService {
     });
   };
 
+  private tryPing = async () => {
+    const res = await this.sendRPC<{ data: number }>("ping", {
+      data: Date.now(),
+    });
+    const now = Date.now();
+    console.log("Ping was ", now - res.data, "ms");
+  };
+
+}
+
+export interface IPhoenixChannelService {
+  getChannel(route: string): IPhoenixChannel;
+}
+
+
+export class PhoenixChannelService implements IService, IPhoenixChannelService {
+  private channels: { [route: string]: IPhoenixChannel } = {};
+  getChannel(route: string): IPhoenixChannel {
+    if (this.channels[route]) {
+      return this.channels[route];
+    }
+    const channel = new PhoenixChannel(route);
+    this.channels[route] = channel;
+    return channel;
+  }
+
+  public initializeService = async (): Promise<void> => { };
   public onServicesReady(): void { }
+
+
 }
