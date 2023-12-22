@@ -1,5 +1,3 @@
-import MainScene from '../scenes/MainScene';
-// import SplashScene from "../scenes/SplashScene";
 import { IService } from './ServiceContainer';
 import Phaser from 'phaser';
 
@@ -17,11 +15,11 @@ export class PhaserGameService implements IService, IPhaserGameService {
     document.body.appendChild(container);
 
     this.game = new Phaser.Game({
-      width: 1024,
-      height: 768,
-      backgroundColor: 0x333333,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      backgroundColor: 0x111111,
       scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
       },
       dom: {
         createContainer: true,

@@ -3,7 +3,9 @@ import { Channel, Socket } from "phoenix";
 
 export interface IPhoenixChannel {
   onConnect: (callback: () => void) => void;
-  sendRPC<T>(rpc: string, data: any): Promise<T>;
+  onDisconnect: (callback: () => void) => void;
+  onError: (callback: () => void) => void;
+  sendRPC<T>(rpc: string, data?: any): Promise<T>;
   subscribe(event: string, callback: (data: any) => void): void;
   get isConnected(): boolean;
 }
@@ -23,6 +25,12 @@ export class PhoenixChannel implements IPhoenixChannel {
   public onConnect: (callback: () => void) => void = (callback) => {
     this.connectPromise.then(callback);
   };
+  public onDisconnect: (callback: () => void) => void = (callback) => {
+    this.channel.onClose(callback);
+  }
+  public onError: (callback: (error: any) => void) => void = (callback) => {
+    this.channel.onError(callback);
+  }
 
   constructor(private route: string) {
     this.connectPromise = this.setupChannel(route);

@@ -12,10 +12,9 @@ defmodule FelixWeb.PageController do
 
     # Assuming you have a name and initial words
     game_name = params["id"]
-    initial_words = ["word1", "word2", "word3"]
 
     # Check and start the game
-    case GameServer.check_and_start_game(game_name, initial_words) do
+    case GameServer.check_and_start_game(game_name) do
       {:ok, pid} ->
         # Game started successfully
         IO.puts("Game started with PID: #{inspect(pid)}")

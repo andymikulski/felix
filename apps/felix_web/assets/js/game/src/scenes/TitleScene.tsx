@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Phaser from 'phaser';
 import React from 'react';
-import MainScene from './MainScene';
+import GameScene from './GameScenes';
 import PhaserReactDOMElement from '../utils/phaser/PRDE';
 
 export default class TitleScreenScene extends Phaser.Scene {
@@ -83,7 +83,7 @@ export default class TitleScreenScene extends Phaser.Scene {
       return;
     }
     this.isTransitioning = true;
-    this.game.scene.add('main scene', MainScene) as MainScene;
+    this.game.scene.add('main scene', GameScene) as GameScene;
 
     this.cameras.main.fadeOut(
       500,

@@ -10,7 +10,7 @@ defmodule GameServer do
     {:via, Registry, {Felix.GameRegistry, "server:#{name}"}}
   end
 
-  def check_and_start_game(name, initial_words) do
+  def check_and_start_game(name) do
     res = Registry.lookup(Felix.GameRegistry, "server:#{name}")
     IO.inspect(res, label: "res")
 
@@ -21,11 +21,11 @@ defmodule GameServer do
 
       _ ->
         # No game server with this name, so start a new one
-        start_new_game(name, initial_words)
+        start_new_game(name)
     end
   end
 
-  defp start_new_game(name, initial_words) do
+  defp start_new_game(name) do
     IO.puts("starting new game #{inspect(name)}")
     server_id = get_server_id(name)
     DynamicSupervisor.start_child(Felix.GameSupervisor, {GameServer, name: server_id})
@@ -109,27 +109,36 @@ defmodule GameServer do
     {:reply, {state.current_word, state.category}, state}
   end
 
+  def handle_call(:get_score, _from, state) do
+    {:reply, state.score, state}
+  end
+
   # Public API to get the current word and category
   def get_word_and_category(server_name) do
     server_id = get_server_id(server_name)
-    GenServer.call({GameServer, name: server_id}, :get_word_and_category)
+    GenServer.call(server_id, :get_word_and_category)
+  end
+
+  def get_score(server_name) do
+    server_id = get_server_id(server_name)
+    GenServer.call(server_id, :get_score)
   end
 
   # Public API to pass the current word
   def pass(server_name) do
     server_id = get_server_id(server_name)
-    GenServer.call({GameServer, name: server_id}, :pass)
+    GenServer.call(server_id, :pass)
   end
 
   # Public API to go to the next word
   def next(server_name) do
     server_id = get_server_id(server_name)
-    GenServer.call({GameServer, name: server_id}, :next)
+    GenServer.call(server_id, :next)
   end
 
   # Public API to fail the current word
   def fail(server_name) do
     server_id = get_server_id(server_name)
-    GenServer.call({GameServer, name: server_id}, :fail)
+    GenServer.call(server_id, :fail)
   end
 end
