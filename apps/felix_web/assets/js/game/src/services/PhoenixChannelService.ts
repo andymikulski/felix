@@ -1,10 +1,11 @@
 import { IService } from "./ServiceContainer";
-import Phaser from "phaser";
 import { Channel, Socket } from "phoenix";
 
 export interface IPhoenixChannel {
+  onConnect: (callback: () => void) => void;
   sendRPC<T>(rpc: string, data: any): Promise<T>;
   subscribe(event: string, callback: (data: any) => void): void;
+  get isConnected(): boolean;
 }
 
 const decoder = new TextDecoder("utf-8");
@@ -12,9 +13,19 @@ const decoder = new TextDecoder("utf-8");
 export class PhoenixChannel implements IPhoenixChannel {
   private socket: Socket;
   private channel: Channel;
+  private hasJoinedChannel = false;
+  private connectPromise: Promise<Socket>;
+
+  public get isConnected(): boolean {
+    return this.hasJoinedChannel;
+  }
+
+  public onConnect: (callback: () => void) => void = (callback) => {
+    this.connectPromise.then(callback);
+  };
 
   constructor(private route: string) {
-    this.setupChannel(route);
+    this.connectPromise = this.setupChannel(route);
   }
 
   private setupChannel = (route: string) => {
@@ -55,13 +66,13 @@ export class PhoenixChannel implements IPhoenixChannel {
         // convert arraybuffer to text
         res = decoder.decode(res);
       }
-      console.log('Received event', event, res);
+      console.log("Received event", event, res);
       callback(res);
     });
     return () => {
       this.channel.off(event, id);
-    }
-  }
+    };
+  };
 
   public sendRPC = <T,>(rpc: string, data: any) => {
     return new Promise<T>((res, rej) => {
@@ -85,13 +96,11 @@ export class PhoenixChannel implements IPhoenixChannel {
     const now = Date.now();
     console.log("Ping was ", now - res.data, "ms");
   };
-
 }
 
 export interface IPhoenixChannelService {
   getChannel(route: string): IPhoenixChannel;
 }
-
 
 export class PhoenixChannelService implements IService, IPhoenixChannelService {
   private channels: { [route: string]: IPhoenixChannel } = {};
@@ -106,6 +115,4 @@ export class PhoenixChannelService implements IService, IPhoenixChannelService {
 
   public initializeService = async (): Promise<void> => { };
   public onServicesReady(): void { }
-
-
 }
