@@ -4,7 +4,9 @@ defmodule GameServer do
   defstruct word_list: [],
             score: 0,
             current_word: nil,
-            category: nil
+            category: nil,
+            time_left_ms: 30_000,
+            game_state: :running
 
   defp get_server_id(name) when is_binary(name) do
     {:via, Registry, {Felix.GameRegistry, "server:#{name}"}}
@@ -47,7 +49,9 @@ defmodule GameServer do
         word_list: words,
         score: 0,
         current_word: List.first(words),
-        category: category
+        category: category,
+        time_left_ms: 30_000,
+        game_state: :running
       },
       name: name
     )
@@ -56,7 +60,21 @@ defmodule GameServer do
   # GenServer init callback
   def init(state) do
     IO.puts("Game server initiated with new state")
+
+    # send the 'tick' message to start the timer
+    Process.send_after(self(), :tick, 100)
+
     {:ok, state}
+  end
+
+  # Handle :tick message (step time down until no time is left)
+  def handle_info(:tick, state) do
+    if state.time_left_ms > 0 do
+      # send the 'tick' message again in 100ms
+      Process.send_after(self(), :tick, 100)
+    end
+
+    {:noreply, Map.update!(state, :time_left_ms, &(&1 - 100))}
   end
 
   # Handler for :pass
@@ -104,6 +122,11 @@ defmodule GameServer do
      |> Map.put(:current_word, new_current_word)}
   end
 
+  # Handler for :get_time
+  def handle_call(:get_time, _from, state) do
+    {:reply, state.time_left_ms, state}
+  end
+
   # Handler for :get_word_and_category
   def handle_call(:get_word_and_category, _from, state) do
     {:reply, {state.current_word, state.category}, state}
@@ -117,6 +140,12 @@ defmodule GameServer do
   def get_word_and_category(server_name) do
     server_id = get_server_id(server_name)
     GenServer.call(server_id, :get_word_and_category)
+  end
+
+  # Public API to get the current time
+  def get_time(server_name) do
+    server_id = get_server_id(server_name)
+    GenServer.call(server_id, :get_time)
   end
 
   def get_score(server_name) do
@@ -140,5 +169,10 @@ defmodule GameServer do
   def fail(server_name) do
     server_id = get_server_id(server_name)
     GenServer.call(server_id, :fail)
+  end
+
+  # Private fn to determine if the game has ended
+  defp game_ended?(state) do
+    state.word_list == [] or state.time_left_ms <= 0
   end
 end

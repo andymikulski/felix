@@ -1,4 +1,6 @@
-import { GameModeChoiceScene, GameModeControllerScene, GameModeHotSeatScene } from "./scenes/GameScenes";
+import { GameModeHotSeatScene } from "./scenes/GameModeHotSeatScene";
+import { GameModeControllerScene } from "./scenes/GameModeControllerScene";
+import { GameModeChoiceScene } from "./scenes/GameModeChoiceScene";
 import { PhaserGameService } from "./services/PhaserGameService";
 import { CastToPhaserGameService } from "./services/PhaserGameService.gen";
 import { PhoenixChannelService } from "./services/PhoenixChannelService";
@@ -7,6 +9,16 @@ import ServiceContainer, { IService } from "./services/ServiceContainer";
 import { CoroutineManager } from "./utils/Coroutines";
 import { TriggerManager } from "./utils/phaser/Triggers";
 import { RVOService } from "./utils/rvo/RVOManager";
+
+
+import "./utils/phaser/PRDE";
+declare global {
+  interface Window {
+    gameInfo: {
+      game_id: string;
+    };
+  }
+}
 
 
 class MainSceneStartupService implements IService {

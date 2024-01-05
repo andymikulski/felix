@@ -87,12 +87,13 @@ defmodule FelixWeb.RoomChannel do
   @impl true
   def handle_in("get_current", payload, socket) do
     {current_word, current_category} = GameServer.get_word_and_category(socket.assigns.room_id)
+    current_time_ms = GameServer.get_time(socket.assigns.room_id)
 
-    if (is_nil(current_word)) do
+    if (is_nil(current_word) or current_time_ms <= 0) do
       on_game_over(socket)
     end
 
-    {:reply, {:ok, %{current_word: current_word, current_category:  current_category}}, socket}
+    {:reply, {:ok, %{current_word: current_word, current_category:  current_category, time_left_ms: current_time_ms}}, socket}
   end
 
   defp on_game_over(socket) do
