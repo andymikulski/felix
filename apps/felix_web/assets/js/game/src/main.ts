@@ -1,14 +1,15 @@
 import { GameModeHotSeatScene } from "./scenes/GameModeHotSeatScene";
 import { GameModeControllerScene } from "./scenes/GameModeControllerScene";
 import { GameModeChoiceScene } from "./scenes/GameModeChoiceScene";
-import { PhaserGameService } from "./services/PhaserGameService";
-import { CastToPhaserGameService } from "./services/PhaserGameService.gen";
 import { PhoenixChannelService } from "./services/PhoenixChannelService";
-import { SceneService } from "./services/SceneService";
-import ServiceContainer, { IService } from "./services/ServiceContainer";
-import { CoroutineManager } from "./utils/Coroutines";
-import { TriggerManager } from "./utils/phaser/Triggers";
-import { RVOService } from "./utils/rvo/RVOManager";
+
+import { PhaserGameService } from "../../phasertron/services/PhaserGameService";
+import { CastToPhaserGameService } from "../../phasertron/services/PhaserGameService.gen";
+import { SceneService } from "../../phasertron/services/SceneService";
+import ServiceContainer, { IService } from "../../phasertron/services/ServiceContainer";
+import { CoroutineManager } from "../../phasertron/utils/Coroutines";
+import { TriggerService } from "../../phasertron/utils/phaser/Triggers";
+import { RVOService } from "../../phasertron/utils/rvo/RVOService";
 
 
 import "./utils/phaser/PRDE";
@@ -52,7 +53,7 @@ class StartupHandler {
       new PhaserGameService(),
       new SceneService(),
       new CoroutineManager(),
-      new TriggerManager(),
+      new TriggerService(),
       new RVOService(),
       new PhoenixChannelService(),
       // Must be last!!
